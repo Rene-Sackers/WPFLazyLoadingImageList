@@ -27,27 +27,6 @@
                     <local:ImageItemUserControl />
                 </DataTemplate>
             </ListBox.Resources>
-            <!--<ListBox.ItemTemplate>
-                <DataTemplate DataType="local:ImageItem">
-                    <local:ImageItemUserControl ImageItem="{Binding}" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>-->
-            <!--<ListBox.ItemTemplate>
-                <DataTemplate DataType="local:ImageItem">
-                    <Grid Height="100">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="200" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <Border BorderBrush="Red" BorderThickness="1">
-                            <Image Source="{Binding ImageSource}" />
-                        </Border>
-                        
-                        <TextBlock Text="{Binding IsLoading}" Grid.Column="1"></TextBlock>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>-->
         </ListBox>
     </Grid>
 </Window>

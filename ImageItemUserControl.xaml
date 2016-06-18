@@ -7,17 +7,41 @@
              mc:Ignorable="d" 
              Height="100"
              d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance Type=local:ImageItem, IsDesignTimeCreatable=False}">
+             d:DataContext="{d:DesignInstance Type=local:ImageItem, IsDesignTimeCreatable=False}"
+             Loaded="ImageItemUserControl_OnLoaded">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Visibility" Value="Visible"></Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                            <Setter Property="Text" Value="Loading..." />
+                        </DataTrigger>
+                        
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition  Binding="{Binding IsLoading}" Value="False" />
+                                <Condition  Binding="{Binding IsLoaded}" Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            
+                            <Setter Property="Text" Value="Hidden" />
+                        </MultiDataTrigger>
+                        
+                        <DataTrigger Binding="{Binding IsLoaded}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
 
-        <Border BorderBrush="Red" BorderThickness="1">
-            <Image Source="{Binding ImageSource}" />
-        </Border>
+        <Image x:Name="Image" Source="{Binding ImageSource}" Visibility="{Binding IsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-        <TextBlock Text="{Binding IsLoading}" Grid.Column="1"></TextBlock>
     </Grid>
 </UserControl>

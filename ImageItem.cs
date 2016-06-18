@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -38,6 +39,8 @@ namespace LazyLoading
             }
         }
 
+        public bool IsLoaded => ImageSource != null;
+
         public ImageSource ImageSource
         {
             get
@@ -50,6 +53,7 @@ namespace LazyLoading
 
                 _imageSource = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(IsLoaded));
             }
         }
 
@@ -58,6 +62,8 @@ namespace LazyLoading
         public void LoadImage()
         {
             if (IsLoading || _imageSource != null) return;
+
+            Debug.WriteLine("Load image");
 
             IsLoading = true;
 
@@ -75,7 +81,6 @@ namespace LazyLoading
         public void UnloadImage()
         {
             ImageSource = null;
-            GC.Collect();
         }
 
         [NotifyPropertyChangedInvocator]
