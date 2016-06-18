@@ -1,0 +1,53 @@
+﻿<Window x:Class="LazyLoading.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LazyLoading"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        Height="350"
+        Width="525"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=True}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="0">
+            <Run>RAM:</Run>
+            <Run Text="{Binding RamUsage, Mode=OneWay}"></Run>
+        </TextBlock>
+
+        <ListBox x:Name="ListBoxImages" ItemsSource="{Binding ImageItems}" HorizontalContentAlignment="Stretch" Grid.Row="1">
+            <ListBox.Resources>
+                <DataTemplate DataType="{x:Type local:ImageItem}">
+                    <local:ImageItemUserControl />
+                </DataTemplate>
+            </ListBox.Resources>
+            <!--<ListBox.ItemTemplate>
+                <DataTemplate DataType="local:ImageItem">
+                    <local:ImageItemUserControl ImageItem="{Binding}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>-->
+            <!--<ListBox.ItemTemplate>
+                <DataTemplate DataType="local:ImageItem">
+                    <Grid Height="100">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Border BorderBrush="Red" BorderThickness="1">
+                            <Image Source="{Binding ImageSource}" />
+                        </Border>
+                        
+                        <TextBlock Text="{Binding IsLoading}" Grid.Column="1"></TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>-->
+        </ListBox>
+    </Grid>
+</Window>
