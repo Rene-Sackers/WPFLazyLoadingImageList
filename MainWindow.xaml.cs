@@ -5,6 +5,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using LazyLoading.Annotations;
 
 namespace LazyLoading
@@ -12,6 +15,8 @@ namespace LazyLoading
     public partial class MainWindow : INotifyPropertyChanged
     {
         private string _ramUsage = "";
+        private VirtualizingStackPanel _virtualizingStackPanel;
+        private int _stackPanelChildrenCount;
 
         public ObservableCollection<ImageItem> ImageItems { get; } = new ObservableCollection<ImageItem>();
 
@@ -25,6 +30,12 @@ namespace LazyLoading
                 _ramUsage = value;
                 OnPropertyChanged();
             }
+        }
+
+        public int StackPanelChildrenCount
+        {
+            get { return _stackPanelChildrenCount; }
+            private set { _stackPanelChildrenCount = value; OnPropertyChanged(); }
         }
 
         public MainWindow()
@@ -106,15 +117,45 @@ namespace LazyLoading
 
             InitializeComponent();
 
+            var uiDispatcher = Dispatcher;
             Task.Factory.StartNew(async () =>
             {
                 while (true)
                 {
                     var currentProcess = Process.GetCurrentProcess();
+
                     RamUsage = "In use: " + ToMbString(currentProcess.WorkingSet64) + ", Reserved: " + ToMbString(currentProcess.PrivateMemorySize64);
+                    uiDispatcher.Invoke(UpdateVirtualizingStackPanelChildrenCount);
                     await Task.Delay(1000);
                 }
             });
+        }
+
+        private void UpdateVirtualizingStackPanelChildrenCount()
+        {
+            StackPanelChildrenCount = _virtualizingStackPanel.Children.Count;
+        }
+
+        private VirtualizingStackPanel GetInnerStackPanel(DependencyObject element)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+            {
+                var child = VisualTreeHelper.GetChild(element, i) as FrameworkElement;
+
+                if (child == null) continue;
+
+                Debug.WriteLine(child.ToString());
+
+                if (child is VirtualizingStackPanel) return child as VirtualizingStackPanel;
+
+                var panel = GetInnerStackPanel(child);
+
+                if (panel != null)
+                    return panel;
+            }
+
+            return null;
+
         }
 
         private string ToMbString(decimal bytes)
@@ -128,6 +169,11 @@ namespace LazyLoading
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            _virtualizingStackPanel = GetInnerStackPanel(ListBoxImages);
         }
     }
 }

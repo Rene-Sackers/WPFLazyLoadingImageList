@@ -8,7 +8,8 @@
              Height="100"
              d:DesignWidth="300"
              d:DataContext="{d:DesignInstance Type=local:ImageItem, IsDesignTimeCreatable=False}"
-             Loaded="ImageItemUserControl_OnLoaded">
+             Loaded="ImageItemUserControl_OnLoaded"
+             x:Name="RootUserControl">
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -19,20 +20,20 @@
             <TextBlock.Style>
                 <Style TargetType="TextBlock">
                     <Setter Property="Visibility" Value="Visible"></Setter>
+                    <Setter Property="Text" Value="Hidden"></Setter>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsLoading}" Value="True">
                             <Setter Property="Text" Value="Loading..." />
                         </DataTrigger>
-                        
+
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition  Binding="{Binding IsLoading}" Value="False" />
-                                <Condition  Binding="{Binding IsLoaded}" Value="False" />
+                                <Condition Binding="{Binding ElementName=RootUserControl, Path=IsInTimeout}" Value="True" />
+                                <Condition Binding="{Binding IsLoading}" Value="False" />
                             </MultiDataTrigger.Conditions>
-                            
-                            <Setter Property="Text" Value="Hidden" />
+                            <Setter Property="Text" Value="In timeout" />
                         </MultiDataTrigger>
-                        
+
                         <DataTrigger Binding="{Binding IsLoaded}" Value="True">
                             <Setter Property="Visibility" Value="Collapsed" />
                         </DataTrigger>

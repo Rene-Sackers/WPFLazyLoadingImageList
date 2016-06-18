@@ -9,16 +9,19 @@
         Height="350"
         Width="525"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=True}">
+        d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=True}"
+        Loaded="MainWindow_OnLoaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        
+
         <TextBlock Grid.Row="0">
             <Run>RAM:</Run>
-            <Run Text="{Binding RamUsage, Mode=OneWay}"></Run>
+            <Run Text="{Binding RamUsage, Mode=OneWay}" />
+            <Run>Items in virtualizing stack panel:</Run>
+            <Run Text="{Binding StackPanelChildrenCount, Mode=OneWay}" />
         </TextBlock>
 
         <ListBox x:Name="ListBoxImages" ItemsSource="{Binding ImageItems}" HorizontalContentAlignment="Stretch" Grid.Row="1">
@@ -27,6 +30,11 @@
                     <local:ImageItemUserControl />
                 </DataTemplate>
             </ListBox.Resources>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel IsItemsHost="True" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
         </ListBox>
     </Grid>
 </Window>
