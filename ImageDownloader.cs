@@ -8,7 +8,7 @@ namespace LazyLoading
     {
         private readonly string _uri;
 
-        private TaskCompletionSource<BitmapImage> _downloadTaskCompletionSource;
+        private TaskCompletionSource<object> _downloadTaskCompletionSource;
 
         private ImageDownloader(string uri)
         {
@@ -19,7 +19,7 @@ namespace LazyLoading
         {
             var bitmapImage = new BitmapImage();
 
-            _downloadTaskCompletionSource = new TaskCompletionSource<BitmapImage>(bitmapImage);
+            _downloadTaskCompletionSource = new TaskCompletionSource<object>(null);
 
             bitmapImage.DownloadCompleted += BitmapImageOnDownloadCompleted;
             bitmapImage.BeginInit();
@@ -35,7 +35,7 @@ namespace LazyLoading
 
         private void BitmapImageOnDownloadCompleted(object sender, EventArgs eventArgs)
         {
-            _downloadTaskCompletionSource.TrySetResult((BitmapImage)_downloadTaskCompletionSource.Task.AsyncState);
+            _downloadTaskCompletionSource.TrySetResult(null);
         }
 
         public static Task<BitmapImage> DownloadImageAsync(string uri)
